@@ -1,0 +1,10 @@
+.alloc          C_ALLOC
+.realloc        C_REALLOC
+.free           C_FREE
+.set            C_SET
+.cpy            C_CPY
+.deref          C_DEREF
+.strerror       C_STRERROR
+.if             C_IF
+.while          C_WHILE
+.for            C_FOR

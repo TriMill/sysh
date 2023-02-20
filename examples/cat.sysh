@@ -1,0 +1,5 @@
+.set $buf { .alloc 1024 }
+.set $read { read 0 $buf 1024 }
+write 1 $buf $read
+.free $buf
+

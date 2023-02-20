@@ -65,8 +65,9 @@ void line_free(Line* line) {
     free(line->args);
 }
 
+static BlockResult parse_block(Scanner* sc, bool braced);
 
-static LineResult parse_line(Scanner* sc, int id) {
+static LineResult parse_line(Scanner* sc, int id, bool* brace_end) {
     Line line;
     line_init(&line, id);
     while(true) {
@@ -74,6 +75,10 @@ static LineResult parse_line(Scanner* sc, int id) {
         switch(tok.type) {
             case TOK_EOF:
             case TOK_EOL:
+                *brace_end = false;
+                return OK(line, LineResult);
+            case TOK_RBRACE:
+                *brace_end = true;
                 return OK(line, LineResult);
             case TOK_ERR: 
                 line_free(&line);
@@ -90,9 +95,17 @@ static LineResult parse_line(Scanner* sc, int id) {
             case TOK_CMD:
                 line_add(&line, (Argument){.type = ARG_CMD, .as.str = tok.as.str});
                 break;
+            case TOK_LBRACE: {
+                BlockResult br = parse_block(sc, true);
+                if(!br.is_ok) {
+                    line_free(&line);
+                    return ERR(br.as.err, LineResult);
+                }
+                line_add(&line, (Argument){.type = ARG_BLOCK, .as.block = br.as.ok});
+            } break;
             default:
                 line_free(&line);
-                return ERR("unexpected token", LineResult);
+                return ERR("unexpected token in line: %d", LineResult);
         }
     }
 }
@@ -118,16 +131,25 @@ static BlockResult parse_block(Scanner* sc, bool braced)  {
                     block_free(&block);
                     return ERR("invalid syscall or command name", BlockResult);
                 }
-                LineResult sr = parse_line(sc, id);
+                bool brace_end;
+                LineResult sr = parse_line(sc, id, &brace_end);
                 if(!sr.is_ok) {
                     block_free(&block);
                     return ERR(sr.as.err, BlockResult);
                 }
+                if(brace_end && !braced) {
+                    line_free(&sr.as.ok);
+                    block_free(&block);
+                    return ERR("unexpected token in block", BlockResult);
+                }
                 block_add(&block, sr.as.ok);
+                if(brace_end) {
+                    return OK(block, BlockResult);
+                }
             } break;
             default: 
                 block_free(&block);
-                return ERR("unexpected token", BlockResult);
+                return ERR("unexpected token in block", BlockResult);
         }
     }
     return OK(block, BlockResult);
