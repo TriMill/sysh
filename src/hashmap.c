@@ -80,7 +80,7 @@ bool hashmap_get(Hashmap* hashmap, const char* key, long* value) {
     return true;
 }
 
-bool hashmap_add(Hashmap* hashmap, char* key, long value) {
+bool hashmap_add(Hashmap* hashmap, const char* key, long value) {
     if(hashmap->len + 1 > hashmap->capacity * TABLE_MAX_LOAD) {
         int capacity = (hashmap->capacity == 0 ? 8 : (2 * hashmap->capacity));
         hashmap_grow(hashmap, capacity);
@@ -89,8 +89,8 @@ bool hashmap_add(Hashmap* hashmap, char* key, long value) {
     bool new_key = e->key == NULL;
     if(new_key) {
         hashmap->len++;
+        e->key = strdup(key);
     }
-    e->key = key;
     e->value = value;                
     return new_key;
 }

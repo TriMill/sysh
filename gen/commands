@@ -4,7 +4,9 @@
 .set            C_SET
 .cpy            C_CPY
 .deref          C_DEREF
-.strerror       C_STRERROR
 .if             C_IF
 .while          C_WHILE
-.for            C_FOR
+.add            C_ADD
+.sub            C_SUB
+.mul            C_MUL
+.div            C_DIV

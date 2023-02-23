@@ -6,9 +6,12 @@
 #define C_SET       -5
 #define C_CPY       -6
 #define C_DEREF     -7
-#define C_STRERROR  -8
-#define C_IF        -9
-#define C_WHILE     -10
-#define C_FOR       -11
+#define C_IF        -8
+#define C_WHILE     -9
+#define C_ADD       -10
+#define C_SUB       -11
+#define C_MUL       -12
+#define C_DIV       -13
+
 
 long trie_get(const char* key);

@@ -1,5 +1,8 @@
-.set $buf { .alloc 1024 }
-.set $read { read 0 $buf 1024 }
-write 1 $buf $read
+.set $BUF_MAX 1024
+.set $buf { .alloc $BUF_MAX }
+.set $read 1
+.while $read {
+    .set $read { read 0 $buf $BUF_MAX }
+    write 1 $buf $read
+}
 .free $buf
-

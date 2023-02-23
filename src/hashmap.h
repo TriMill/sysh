@@ -17,7 +17,7 @@ typedef struct {
 void hashmap_init(Hashmap* hashmap);
 void hashmap_free(Hashmap* hashmap);
 
-bool hashmap_add(Hashmap* hashmap, char* key, long value);
+bool hashmap_add(Hashmap* hashmap, const char* key, long value);
 bool hashmap_get(Hashmap* hashmap, const char* key, long* value);
 bool hashmap_remove(Hashmap* hashmap, const char* key);
 
